@@ -5,18 +5,18 @@ All charts use the portfolio consistent theme and are exported as
 self contained HTML files and static PNG images.
 
 Key IPEDS columns used:
-- HD: UNITID, INSTNM, STABBR, CONTROL, ICLEVEL, INSTSIZE, LONGITUD, LATITUDE
+- HD: UNITID, INSTNM, STABBR, CONTROL, ICLEVEL, INSTSIZE
   CONTROL: 1=Public, 2=Private nonprofit, 3=Private for-profit
-- EFFY: UNITID, EFYTOTLT (total enrollment), EFFYLEV (level)
-- GR: UNITID, GRTOTLT (graduation rate total cohort), GRTYPE
-- C: UNITID, CTOTALT (total completions), AWLEVEL (award level)
+- EFFY: UNITID, EFYTOTLT (total enrollment), EFFYLEV (level), LSTUDY
+- GR: UNITID, GRTOTLT (total in cohort), GRTYPE, GRTOTLM/GRTOTLW (completers)
+  Note: GRTOTLT is cohort SIZE, not graduation rate. Rate must be computed.
+- C: UNITID, CTOTALT (total completions), AWLEVEL (award level), MAJORNUM
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-import plotly.express as px
 import plotly.graph_objects as go
 import plotly.io as pio
 import polars as pl
@@ -41,6 +41,23 @@ pio.templates.default = "portfolio"
 # IPEDS CONTROL codes
 CONTROL_LABELS = {1: "Public", 2: "Private Nonprofit", 3: "Private For-Profit"}
 
+# Common layout settings
+_COMMON_LAYOUT = dict(
+    title_x=0.5,
+    title_xanchor="center",
+    margin=dict(t=100, b=100, l=80, r=40),
+    font=dict(size=13),
+)
+
+_LEGEND_BOTTOM = dict(
+    orientation="h",
+    yanchor="top",
+    y=-0.18,
+    xanchor="center",
+    x=0.5,
+    font=dict(size=12),
+)
+
 
 def _load_parquet(name: str) -> pl.DataFrame:
     """Load a processed Parquet file."""
@@ -56,6 +73,7 @@ def save_figure(
     name: str,
     *,
     formats: list[str] | None = None,
+    height: int = 700,
 ) -> list[Path]:
     """Save a Plotly figure in multiple formats.
 
@@ -63,6 +81,7 @@ def save_figure(
         fig: Plotly Figure to save.
         name: Base filename.
         formats: List of formats. Defaults to ["html", "png"].
+        height: Image height in pixels.
 
     Returns:
         List of paths to saved files.
@@ -79,7 +98,7 @@ def save_figure(
             fig.write_html(str(p), include_plotlyjs="cdn")
         elif fmt in ("png", "svg", "pdf"):
             p = REPORTS_IMAGES_DIR / f"{name}.{fmt}"
-            fig.write_image(str(p), width=1200, height=600, scale=2)
+            fig.write_image(str(p), width=1200, height=height, scale=2)
         else:
             continue
         paths.append(p)
@@ -101,27 +120,44 @@ def plot_institution_count_trends(hd: pl.DataFrame) -> go.Figure:
         .with_columns(pl.col("CONTROL").replace_strict(CONTROL_LABELS).alias("Sector"))
         .group_by(["SURVEY_YEAR", "Sector"])
         .len()
-        .sort("SURVEY_YEAR")
+        .sort(["Sector", "SURVEY_YEAR"])
     )
 
-    fig = px.line(
-        counts.to_pandas(),
-        x="SURVEY_YEAR",
-        y="len",
-        color="Sector",
-        markers=True,
-        title="US Postsecondary Institutions by Sector (2018-2024)",
-        labels={"SURVEY_YEAR": "Year", "len": "Number of Institutions"},
-        color_discrete_sequence=COLORWAY,
+    fig = go.Figure()
+    for i, sector in enumerate(["Public", "Private Nonprofit", "Private For-Profit"]):
+        sector_data = counts.filter(pl.col("Sector") == sector).sort("SURVEY_YEAR")
+        fig.add_trace(
+            go.Scatter(
+                x=sector_data["SURVEY_YEAR"].to_list(),
+                y=sector_data["len"].to_list(),
+                mode="lines+markers+text",
+                name=sector,
+                text=[f"{v:,}" for v in sector_data["len"].to_list()],
+                textposition="top center",
+                textfont=dict(size=10),
+                line=dict(width=3, color=COLORWAY[i]),
+                marker=dict(size=8),
+            )
+        )
+
+    total = hd.filter(pl.col("CONTROL").is_in([1, 2, 3])).height
+    fig.update_layout(
+        title=dict(
+            text=(
+                "US Postsecondary Institutions by Sector<br>"
+                f"<sub>Source: IPEDS HD, 2018-2024 | {total:,} institution-years</sub>"
+            )
+        ),
+        xaxis=dict(title="Academic Year", dtick=1),
+        yaxis=dict(title="Number of Institutions", tickformat=","),
+        legend=_LEGEND_BOTTOM,
+        **_COMMON_LAYOUT,
     )
-    fig.update_layout(legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1))
     return fig
 
 
 def plot_enrollment_trends(effy: pl.DataFrame, hd: pl.DataFrame) -> go.Figure:
     """Line chart: total enrollment by sector over time.
-
-    Joins EFFY enrollment totals with HD sector information.
 
     Args:
         effy: Combined EFFY DataFrame.
@@ -130,17 +166,26 @@ def plot_enrollment_trends(effy: pl.DataFrame, hd: pl.DataFrame) -> go.Figure:
     Returns:
         Plotly Figure.
     """
-    # EFFYLEV=1 is all students; EFYTOTLT is total enrollment
-    enrollment = effy.filter(pl.col("EFFYLEV") == 1)
-
-    if "EFYTOTLT" not in enrollment.columns:
-        console.print("[yellow]EFYTOTLT not found in EFFY, skipping enrollment trends[/yellow]")
+    if "EFYTOTLT" not in effy.columns:
+        console.print("[yellow]EFYTOTLT not found in EFFY, skipping[/yellow]")
         return go.Figure()
 
-    # Aggregate enrollment per institution per year
-    enr_by_inst = enrollment.group_by(["UNITID", "SURVEY_YEAR"]).agg(pl.col("EFYTOTLT").sum())
+    # EFFYLEV=1 means all students; filter to avoid double counting
+    enrollment = effy.filter(pl.col("EFFYLEV") == 1) if "EFFYLEV" in effy.columns else effy
 
-    # Join with HD for sector info
+    # Also filter LSTUDY if present (LSTUDY can cause multiple rows per inst)
+    if "LSTUDY" in enrollment.columns:
+        # LSTUDY=999 or the broadest level is total
+        # If filtering too aggressively, just aggregate
+        pass
+
+    # Aggregate to one row per institution per year
+    enr_by_inst = (
+        enrollment.group_by(["UNITID", "SURVEY_YEAR"]).agg(
+            pl.col("EFYTOTLT").max()
+        )  # Use max to avoid double counting
+    )
+
     hd_sector = hd.select(["UNITID", "SURVEY_YEAR", "CONTROL"]).filter(
         pl.col("CONTROL").is_in([1, 2, 3])
     )
@@ -150,22 +195,35 @@ def plot_enrollment_trends(effy: pl.DataFrame, hd: pl.DataFrame) -> go.Figure:
         joined.with_columns(pl.col("CONTROL").replace_strict(CONTROL_LABELS).alias("Sector"))
         .group_by(["SURVEY_YEAR", "Sector"])
         .agg(pl.col("EFYTOTLT").sum())
-        .sort("SURVEY_YEAR")
+        .sort(["Sector", "SURVEY_YEAR"])
     )
 
-    fig = px.line(
-        totals.to_pandas(),
-        x="SURVEY_YEAR",
-        y="EFYTOTLT",
-        color="Sector",
-        markers=True,
-        title="Total 12-Month Enrollment by Sector (2018-2024)",
-        labels={"SURVEY_YEAR": "Year", "EFYTOTLT": "Total Enrollment"},
-        color_discrete_sequence=COLORWAY,
-    )
+    fig = go.Figure()
+    for i, sector in enumerate(["Public", "Private Nonprofit", "Private For-Profit"]):
+        sector_data = totals.filter(pl.col("Sector") == sector).sort("SURVEY_YEAR")
+        fig.add_trace(
+            go.Scatter(
+                x=sector_data["SURVEY_YEAR"].to_list(),
+                y=sector_data["EFYTOTLT"].to_list(),
+                mode="lines+markers",
+                name=sector,
+                line=dict(width=3, color=COLORWAY[i]),
+                marker=dict(size=8),
+                hovertemplate="%{y:,.0f} students<extra>%{fullData.name}</extra>",
+            )
+        )
+
     fig.update_layout(
-        yaxis_tickformat=",",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        title=dict(
+            text=(
+                "Total 12-Month Enrollment by Sector<br>"
+                "<sub>Source: IPEDS EFFY (EFFYLEV=1), 2018-2024</sub>"
+            )
+        ),
+        xaxis=dict(title="Academic Year", dtick=1),
+        yaxis=dict(title="Total 12-Month Enrollment", tickformat=",.0f"),
+        legend=_LEGEND_BOTTOM,
+        **_COMMON_LAYOUT,
     )
     return fig
 
@@ -185,28 +243,45 @@ def plot_geographic_map(hd: pl.DataFrame) -> go.Figure:
     state_counts = (
         latest.group_by("STABBR")
         .len()
-        .rename({"len": "Institution Count"})
+        .rename({"len": "Institutions"})
         .filter(pl.col("STABBR").str.len_chars() == 2)
+        .sort("Institutions", descending=True)
     )
 
-    fig = px.choropleth(
-        state_counts.to_pandas(),
-        locations="STABBR",
-        locationmode="USA-states",
-        color="Institution Count",
-        scope="usa",
-        title=f"Postsecondary Institutions by State ({latest_year})",
-        color_continuous_scale=[PORTFOLIO_COLORS["light"], PORTFOLIO_COLORS["primary"]],
+    top_state = state_counts.row(0)
+
+    fig = go.Figure(
+        go.Choropleth(
+            locations=state_counts["STABBR"].to_list(),
+            z=state_counts["Institutions"].to_list(),
+            locationmode="USA-states",
+            colorscale=[
+                [0, PORTFOLIO_COLORS["light"]],
+                [0.3, PORTFOLIO_COLORS["accent"]],
+                [0.7, PORTFOLIO_COLORS["primary"]],
+                [1, PORTFOLIO_COLORS["secondary"]],
+            ],
+            colorbar=dict(title="Institutions", thickness=15, len=0.6),
+            hovertemplate="<b>%{location}</b><br>Institutions: %{z:,}<extra></extra>",
+        )
     )
-    fig.update_layout(geo=dict(bgcolor="white"))
+
+    fig.update_layout(
+        title=dict(
+            text=(
+                f"Postsecondary Institutions by State ({latest_year})<br>"
+                f"<sub>Source: IPEDS HD | Total: {latest.height:,} institutions | "
+                f"Most: {top_state[0]} ({top_state[1]:,})</sub>"
+            )
+        ),
+        geo=dict(scope="usa", bgcolor="white", lakecolor="white"),
+        **_COMMON_LAYOUT,
+    )
     return fig
 
 
 def plot_completions_by_level(c_df: pl.DataFrame) -> go.Figure:
     """Stacked bar: total completions by award level over time.
-
-    AWLEVEL codes: 1=Certificate<1yr, 2=Certificate1-2yr, 3=Associate,
-    5=Bachelor, 7=Master, 9=Doctor-Research, etc.
 
     Args:
         c_df: Combined Completions DataFrame.
@@ -215,24 +290,24 @@ def plot_completions_by_level(c_df: pl.DataFrame) -> go.Figure:
         Plotly Figure.
     """
     level_labels = {
-        "1": "Certificate (<1yr)",
-        "2": "Certificate (1-2yr)",
-        "3": "Associate",
+        "3": "Associate's",
         "5": "Bachelor's",
         "7": "Master's",
-        "8": "Post-Master's",
-        "9": "Doctor's (Research)",
-        "10": "Doctor's (Professional)",
-        "11": "Doctor's (Other)",
+        "9": "Doctorate (Research)",
+        "10": "Doctorate (Professional)",
     }
 
     if "AWLEVEL" not in c_df.columns or "CTOTALT" not in c_df.columns:
-        console.print("[yellow]AWLEVEL/CTOTALT not found, skipping completions chart[/yellow]")
+        console.print("[yellow]AWLEVEL/CTOTALT not found, skipping[/yellow]")
         return go.Figure()
 
-    # Filter to main award levels and aggregate
+    # Filter to MAJORNUM=1 if present (avoids double counting for double majors)
+    filtered = c_df
+    if "MAJORNUM" in c_df.columns:
+        filtered = c_df.filter(pl.col("MAJORNUM") == 1)
+
     totals = (
-        c_df.with_columns(pl.col("AWLEVEL").cast(pl.String))
+        filtered.with_columns(pl.col("AWLEVEL").cast(pl.String))
         .filter(pl.col("AWLEVEL").is_in(list(level_labels.keys())))
         .with_columns(pl.col("AWLEVEL").replace_strict(level_labels).alias("Award Level"))
         .group_by(["SURVEY_YEAR", "Award Level"])
@@ -240,19 +315,45 @@ def plot_completions_by_level(c_df: pl.DataFrame) -> go.Figure:
         .sort("SURVEY_YEAR")
     )
 
-    fig = px.bar(
-        totals.to_pandas(),
-        x="SURVEY_YEAR",
-        y="CTOTALT",
-        color="Award Level",
-        title="Completions by Award Level (2018-2024)",
-        labels={"SURVEY_YEAR": "Year", "CTOTALT": "Total Completions"},
-        color_discrete_sequence=COLORWAY,
-        barmode="stack",
-    )
+    grand_total = totals["CTOTALT"].sum()
+
+    # Use specific order for stacking
+    level_order = [
+        "Associate's",
+        "Bachelor's",
+        "Master's",
+        "Doctorate (Research)",
+        "Doctorate (Professional)",
+    ]
+
+    fig = go.Figure()
+    for i, level in enumerate(level_order):
+        level_data = totals.filter(pl.col("Award Level") == level).sort("SURVEY_YEAR")
+        if level_data.height == 0:
+            continue
+        fig.add_trace(
+            go.Bar(
+                x=level_data["SURVEY_YEAR"].to_list(),
+                y=level_data["CTOTALT"].to_list(),
+                name=level,
+                marker_color=COLORWAY[i],
+                hovertemplate=f"{level}<br>%{{x}}: %{{y:,.0f}}<extra></extra>",
+            )
+        )
+
     fig.update_layout(
-        yaxis_tickformat=",",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        barmode="stack",
+        title=dict(
+            text=(
+                "Degrees Awarded by Level<br>"
+                f"<sub>Source: IPEDS Completions (MAJORNUM=1), 2018-2024 | "
+                f"Total: {grand_total:,.0f} awards</sub>"
+            )
+        ),
+        xaxis=dict(title="Academic Year", dtick=1),
+        yaxis=dict(title="Total Completions", tickformat=","),
+        legend=_LEGEND_BOTTOM,
+        **_COMMON_LAYOUT,
     )
     return fig
 
@@ -260,8 +361,10 @@ def plot_completions_by_level(c_df: pl.DataFrame) -> go.Figure:
 def plot_graduation_rate_distribution(gr: pl.DataFrame, hd: pl.DataFrame) -> go.Figure:
     """Box plot: graduation rate distribution by sector.
 
-    Uses GRTYPE=2 (Bachelor's seeking, 4-year) and GRTOTLT (total cohort
-    graduation rate).
+    IPEDS GR structure:
+    - GRTYPE=2, CHRTSTAT=12: Adjusted cohort (GRTOTLT = cohort size)
+    - GRTYPE=3, CHRTSTAT=13: Completers within 150% time (GRTOTLT = completers)
+    Graduation rate = GRTYPE3.GRTOTLT / GRTYPE2.GRTOTLT * 100
 
     Args:
         gr: Combined GR DataFrame.
@@ -270,17 +373,33 @@ def plot_graduation_rate_distribution(gr: pl.DataFrame, hd: pl.DataFrame) -> go.
     Returns:
         Plotly Figure.
     """
-    if "GRTOTLT" not in gr.columns:
-        console.print("[yellow]GRTOTLT not found, skipping graduation rate chart[/yellow]")
-        return go.Figure()
+    latest_year = gr["SURVEY_YEAR"].max()
 
-    # GRTYPE=2 is typically the bachelor's degree seeking cohort
-    gr_filtered = gr.filter(
-        (pl.col("GRTYPE") == 2) & pl.col("GRTOTLT").is_not_null() & (pl.col("GRTOTLT") > 0)
+    # Get cohort sizes (GRTYPE=2)
+    cohort = gr.filter(
+        (pl.col("GRTYPE") == 2)
+        & (pl.col("SURVEY_YEAR") == latest_year)
+        & pl.col("GRTOTLT").is_not_null()
+        & (pl.col("GRTOTLT") > 0)
+    ).select(["UNITID", pl.col("GRTOTLT").alias("COHORT_SIZE")])
+
+    # Get completers (GRTYPE=3)
+    completers = gr.filter(
+        (pl.col("GRTYPE") == 3)
+        & (pl.col("SURVEY_YEAR") == latest_year)
+        & pl.col("GRTOTLT").is_not_null()
+    ).select(["UNITID", pl.col("GRTOTLT").alias("COMPLETERS")])
+
+    # Compute graduation rate
+    rates = (
+        cohort.join(completers, on="UNITID", how="inner")
+        .with_columns((pl.col("COMPLETERS") / pl.col("COHORT_SIZE") * 100).alias("GRAD_RATE"))
+        .filter((pl.col("GRAD_RATE") >= 0) & (pl.col("GRAD_RATE") <= 100))
     )
 
-    latest_year = gr_filtered["SURVEY_YEAR"].max()
-    gr_latest = gr_filtered.filter(pl.col("SURVEY_YEAR") == latest_year)
+    if rates.height == 0:
+        console.print("[yellow]No graduation rates computed, skipping[/yellow]")
+        return go.Figure()
 
     # Join with HD for sector
     hd_sector = (
@@ -288,27 +407,59 @@ def plot_graduation_rate_distribution(gr: pl.DataFrame, hd: pl.DataFrame) -> go.
         .select(["UNITID", "CONTROL"])
         .filter(pl.col("CONTROL").is_in([1, 2, 3]))
     )
-    joined = gr_latest.join(hd_sector, on="UNITID", how="inner").with_columns(
+    joined = rates.join(hd_sector, on="UNITID", how="inner").with_columns(
         pl.col("CONTROL").replace_strict(CONTROL_LABELS).alias("Sector")
     )
 
-    fig = px.box(
-        joined.to_pandas(),
-        x="Sector",
-        y="GRTOTLT",
-        color="Sector",
-        title=f"Graduation Rate Distribution by Sector ({latest_year})",
-        labels={"GRTOTLT": "Graduation Rate (%)"},
-        color_discrete_sequence=COLORWAY,
+    # Compute medians for annotations
+    medians = joined.group_by("Sector").agg(pl.col("GRAD_RATE").median().alias("median"))
+    overall_median = joined["GRAD_RATE"].median()
+
+    fig = go.Figure()
+    for i, sector in enumerate(["Public", "Private Nonprofit", "Private For-Profit"]):
+        sector_data = joined.filter(pl.col("Sector") == sector)
+        if sector_data.height == 0:
+            continue
+        fig.add_trace(
+            go.Box(
+                y=sector_data["GRAD_RATE"].to_list(),
+                name=sector,
+                marker_color=COLORWAY[i],
+                boxmean=True,
+                hoverinfo="y+name",
+            )
+        )
+
+    # Add median annotations
+    for row in medians.iter_rows():
+        fig.add_annotation(
+            x=row[0],
+            y=row[1],
+            text=f"Median: {row[1]:.1f}%",
+            showarrow=False,
+            yshift=20,
+            font=dict(size=11, color=PORTFOLIO_COLORS["secondary"]),
+        )
+
+    fig.update_layout(
+        title=dict(
+            text=(
+                f"Graduation Rate Distribution by Sector ({latest_year})<br>"
+                f"<sub>Source: IPEDS GR (Bachelor's cohort, 150% time) | "
+                f"N = {joined.height:,} institutions | "
+                f"Overall median: {overall_median:.1f}%</sub>"
+            )
+        ),
+        xaxis=dict(title=""),
+        yaxis=dict(title="Graduation Rate (%)", range=[0, 105]),
+        showlegend=False,
+        **_COMMON_LAYOUT,
     )
-    fig.update_layout(showlegend=False)
     return fig
 
 
 def plot_schema_changes_summary() -> go.Figure:
-    """Bar chart: number of schema changes detected per component.
-
-    Reads from the interim schema_changes.csv generated by profiling.
+    """Bar chart: schema changes detected per component.
 
     Returns:
         Plotly Figure.
@@ -321,36 +472,54 @@ def plot_schema_changes_summary() -> go.Figure:
         return go.Figure()
 
     changes = pl.read_csv(path)
+    total_changes = changes.height
+
+    label_map = {
+        "hd": "Institutional\nCharacteristics",
+        "effy": "12-Month\nEnrollment",
+        "c": "Completions",
+        "gr": "Graduation\nRates",
+    }
+
     counts = (
         changes.group_by("component")
         .len()
         .rename({"len": "Schema Changes"})
-        .with_columns(
-            pl.col("component")
-            .replace_strict(
-                {
-                    "hd": "Institutional\nCharacteristics",
-                    "effy": "12-Month\nEnrollment",
-                    "c": "Completions",
-                    "gr": "Graduation\nRates",
-                }
-            )
-            .alias("Component")
-        )
+        .with_columns(pl.col("component").replace_strict(label_map).alias("Component"))
         .sort("Schema Changes", descending=True)
     )
 
-    fig = px.bar(
-        counts.to_pandas(),
-        x="Component",
-        y="Schema Changes",
-        title="Cross-Year Schema Changes Detected per Component",
-        color="Schema Changes",
-        color_continuous_scale=[PORTFOLIO_COLORS["accent"], PORTFOLIO_COLORS["danger"]],
-        text="Schema Changes",
+    fig = go.Figure(
+        go.Bar(
+            x=counts["Component"].to_list(),
+            y=counts["Schema Changes"].to_list(),
+            text=counts["Schema Changes"].to_list(),
+            textposition="outside",
+            textfont=dict(size=16, color=PORTFOLIO_COLORS["text"]),
+            marker=dict(
+                color=counts["Schema Changes"].to_list(),
+                colorscale=[[0, PORTFOLIO_COLORS["accent"]], [1, PORTFOLIO_COLORS["danger"]]],
+            ),
+            hovertemplate="%{x}<br>%{y} columns changed<extra></extra>",
+        )
     )
-    fig.update_traces(textposition="outside")
-    fig.update_layout(coloraxis_showscale=False)
+
+    fig.update_layout(
+        title=dict(
+            text=(
+                "Cross-Year Schema Changes Detected by Pipeline<br>"
+                f"<sub>Automated detection across 28 CSV files, 7 years (2018-2024) | "
+                f"Total: {total_changes} column-level changes</sub>"
+            )
+        ),
+        xaxis=dict(title=""),
+        yaxis=dict(
+            title="Number of Column Changes",
+            range=[0, max(counts["Schema Changes"].to_list()) * 1.2],
+        ),
+        showlegend=False,
+        **_COMMON_LAYOUT,
+    )
     return fig
 
 
@@ -380,7 +549,7 @@ def generate_all_visualizations() -> list[Path]:
     ]
 
     for name, fig in charts:
-        if fig.data:  # Skip empty figures
+        if fig.data:
             console.print(f"\n[bold blue]Generating {name}...[/bold blue]")
             paths = save_figure(fig, name)
             for p in paths:
