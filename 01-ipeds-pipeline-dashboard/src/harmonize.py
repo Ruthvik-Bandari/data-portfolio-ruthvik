@@ -7,14 +7,10 @@ type coercion rules, and applies YAML-defined schema definitions.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import polars as pl
 
 from src.config import SCHEMAS_DIR
-
-if TYPE_CHECKING:
-    pass
 
 
 def load_schema_mapping(component: str, schema_dir: Path | None = None) -> dict:
@@ -31,7 +27,9 @@ def load_schema_mapping(component: str, schema_dir: Path | None = None) -> dict:
 
 
 def build_column_mapping(
-    source_columns: list[str], year: int, component: str,
+    source_columns: list[str],
+    year: int,
+    component: str,
 ) -> dict[str, str]:
     """Build a column rename mapping for a specific year.
 
@@ -60,7 +58,8 @@ def apply_column_mapping(df: pl.DataFrame, mapping: dict[str, str]) -> pl.DataFr
 
 
 def apply_type_coercions(
-    df: pl.DataFrame, coercions: dict[str, pl.DataType],
+    df: pl.DataFrame,
+    coercions: dict[str, pl.DataType],
 ) -> pl.DataFrame:
     """Apply type coercion rules to a DataFrame.
 
@@ -75,7 +74,8 @@ def apply_type_coercions(
 
 
 def harmonize_component(
-    dataframes: dict[int, pl.DataFrame], component: str,
+    dataframes: dict[int, pl.DataFrame],
+    component: str,
 ) -> dict[int, pl.DataFrame]:
     """Harmonize all years of a single survey component.
 

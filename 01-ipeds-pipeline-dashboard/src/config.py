@@ -26,9 +26,18 @@ SURVEY_YEARS: list[int] = [2018, 2019, 2020, 2021, 2022, 2023, 2024]
 
 SURVEY_COMPONENTS: dict[str, str] = {
     "hd": "Institutional Characteristics",
-    "ef": "Fall Enrollment",
+    "effy": "12-Month Enrollment",
     "c": "Completions",
     "gr": "Graduation Rates",
+}
+
+# Maps component prefix to the glob pattern for its raw CSV files.
+# Completions files have a `_a` suffix; others are just `{prefix}{year}.csv`.
+COMPONENT_FILE_PATTERNS: dict[str, str] = {
+    "hd": "hd{year}.csv",
+    "effy": "effy{year}.csv",
+    "c": "c{year}_a.csv",
+    "gr": "gr{year}.csv",
 }
 
 PRIMARY_KEY = "UNITID"
@@ -63,8 +72,14 @@ PORTFOLIO_COLORS: dict[str, str] = {
 }
 
 COLORWAY: list[str] = [
-    "#2E75B6", "#17A2B8", "#F39C12", "#E74C3C",
-    "#2ECC71", "#9B59B6", "#1ABC9C", "#E67E22",
+    "#2E75B6",
+    "#17A2B8",
+    "#F39C12",
+    "#E74C3C",
+    "#2ECC71",
+    "#9B59B6",
+    "#1ABC9C",
+    "#E67E22",
 ]
 
 PLOTLY_TEMPLATE: dict = {

@@ -5,13 +5,8 @@ Defines schema models for the final combined IPEDS dataset.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import pandera.polars as pa
 import polars as pl
-
-if TYPE_CHECKING:
-    pass
 
 
 class InstitutionSchema(pa.DataFrameModel):
@@ -42,7 +37,8 @@ def validate_combined_dataset(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def generate_validation_report(
-    df: pl.DataFrame, output_path: str | None = None,
+    df: pl.DataFrame,
+    output_path: str | None = None,
 ) -> dict[str, int | float | list]:
     """Generate a validation summary report.
 

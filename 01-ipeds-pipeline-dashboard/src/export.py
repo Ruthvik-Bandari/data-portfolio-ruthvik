@@ -7,18 +7,17 @@ BI tool optimized formats.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import polars as pl
 
 from src.config import PROCESSED_DIR
 
-if TYPE_CHECKING:
-    pass
-
 
 def export_parquet(
-    df: pl.DataFrame, output_path: Path | None = None, *, compression: str = "zstd",
+    df: pl.DataFrame,
+    output_path: Path | None = None,
+    *,
+    compression: str = "zstd",
 ) -> Path:
     """Export DataFrame to Parquet format.
 

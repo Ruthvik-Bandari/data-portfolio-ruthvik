@@ -7,16 +7,12 @@ using the portfolio consistent theme.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import plotly.graph_objects as go
 import plotly.io as pio
 import polars as pl
 
-from src.config import COLORWAY, PLOTLY_TEMPLATE, PORTFOLIO_COLORS, REPORTS_DIR, REPORTS_IMAGES_DIR
-
-if TYPE_CHECKING:
-    pass
+from src.config import PLOTLY_TEMPLATE, PORTFOLIO_COLORS, REPORTS_DIR
 
 portfolio_template = go.layout.Template(**PLOTLY_TEMPLATE)
 pio.templates["portfolio"] = portfolio_template
@@ -24,7 +20,10 @@ pio.templates.default = "portfolio"
 
 
 def plot_enrollment_trends(
-    df: pl.DataFrame, *, group_by: str = "sector", output_path: Path | None = None,
+    df: pl.DataFrame,
+    *,
+    group_by: str = "sector",
+    output_path: Path | None = None,
 ) -> go.Figure:
     """Multi line chart showing enrollment trends by institution type.
 
@@ -40,8 +39,10 @@ def plot_enrollment_trends(
 
 
 def plot_geographic_distribution(
-    df: pl.DataFrame, metric: str = "graduation_rate_total",
-    year: int | None = None, output_path: Path | None = None,
+    df: pl.DataFrame,
+    metric: str = "graduation_rate_total",
+    year: int | None = None,
+    output_path: Path | None = None,
 ) -> go.Figure:
     """Choropleth map of institutions colored by a metric.
 
@@ -58,7 +59,8 @@ def plot_geographic_distribution(
 
 
 def plot_completion_heatmap(
-    df: pl.DataFrame, output_path: Path | None = None,
+    df: pl.DataFrame,
+    output_path: Path | None = None,
 ) -> go.Figure:
     """Heatmap of completion rates by program area and institution type.
 
@@ -73,7 +75,9 @@ def plot_completion_heatmap(
 
 
 def plot_tuition_vs_graduation(
-    df: pl.DataFrame, year: int | None = None, output_path: Path | None = None,
+    df: pl.DataFrame,
+    year: int | None = None,
+    output_path: Path | None = None,
 ) -> go.Figure:
     """Scatter plot of tuition vs graduation rate.
 
@@ -89,7 +93,10 @@ def plot_tuition_vs_graduation(
 
 
 def plot_metric_distribution(
-    df: pl.DataFrame, metric: str, *, by_group: str | None = None,
+    df: pl.DataFrame,
+    metric: str,
+    *,
+    by_group: str | None = None,
     output_path: Path | None = None,
 ) -> go.Figure:
     """Violin/box plot of a metric distribution.
@@ -107,7 +114,10 @@ def plot_metric_distribution(
 
 
 def save_figure(
-    fig: go.Figure, name: str, *, formats: list[str] | None = None,
+    fig: go.Figure,
+    name: str,
+    *,
+    formats: list[str] | None = None,
 ) -> list[Path]:
     """Save a Plotly figure in multiple formats.
 

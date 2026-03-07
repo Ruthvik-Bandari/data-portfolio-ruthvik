@@ -54,7 +54,7 @@ select = [
     "UP",   # pyupgrade
     "B",    # flake8-bugbear
     "SIM",  # flake8-simplify
-    "TCH",  # flake8-type-checking
+    "RUF001",  # flake8-type-checking
     "RUF",  # ruff-specific
     "N",    # pep8-naming
     "D",    # pydocstyle

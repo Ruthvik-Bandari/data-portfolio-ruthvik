@@ -6,18 +6,15 @@ multi year data with a survey_year column.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import polars as pl
 
 from src.config import PRIMARY_KEY
 
-if TYPE_CHECKING:
-    pass
-
 
 def join_components_for_year(
-    components: dict[str, pl.DataFrame], year: int, join_key: str = PRIMARY_KEY,
+    components: dict[str, pl.DataFrame],
+    year: int,
+    join_key: str = PRIMARY_KEY,
 ) -> pl.DataFrame:
     """Join multiple survey components for a single year.
 

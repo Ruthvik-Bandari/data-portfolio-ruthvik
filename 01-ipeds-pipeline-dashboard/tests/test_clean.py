@@ -39,10 +39,12 @@ class TestDeduplicateInstitutions:
     @pytest.mark.skip(reason="Not yet implemented")
     def test_removes_duplicate_unitids(self) -> None:
         """Verify duplicate UNITID rows are removed."""
-        df = pl.DataFrame({
-            "UNITID": [100001, 100001, 100002],
-            "name": ["MIT", "MIT (dup)", "Harvard"],
-        })
+        df = pl.DataFrame(
+            {
+                "UNITID": [100001, 100001, 100002],
+                "name": ["MIT", "MIT (dup)", "Harvard"],
+            }
+        )
         result = deduplicate_institutions(df)
         assert result.height == 2
 

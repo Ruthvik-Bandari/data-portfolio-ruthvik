@@ -6,18 +6,14 @@ and imputation flag processing.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import polars as pl
 
 from src.config import MISSING_DATA_CODES
 
-if TYPE_CHECKING:
-    pass
-
 
 def standardize_nulls(
-    df: pl.DataFrame, null_codes: dict[str, str] | None = None,
+    df: pl.DataFrame,
+    null_codes: dict[str, str] | None = None,
 ) -> pl.DataFrame:
     """Replace all IPEDS missing data codes with proper Polars nulls.
 
@@ -44,7 +40,8 @@ def process_imputation_flags(df: pl.DataFrame) -> pl.DataFrame:
 
 
 def deduplicate_institutions(
-    df: pl.DataFrame, key_column: str = "UNITID",
+    df: pl.DataFrame,
+    key_column: str = "UNITID",
 ) -> pl.DataFrame:
     """Remove duplicate institution records.
 
