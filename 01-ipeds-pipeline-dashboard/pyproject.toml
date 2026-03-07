@@ -1,0 +1,76 @@
+[project]
+name = "ipeds-pipeline-dashboard"
+version = "0.1.0"
+description = "IPEDS Higher Education Data Pipeline & Dashboard — Schema harmonization, data profiling, and interactive visualizations for 6 years of IPEDS survey data."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.12"
+authors = [
+    { name = "Ruthvik Bandari" },
+]
+keywords = ["ipeds", "higher-education", "data-pipeline", "polars", "tableau", "visualization"]
+
+dependencies = [
+    "polars[all]>=1.38",
+    "pandera[polars]>=0.29",
+    "pyarrow>=18.0",
+    "duckdb>=1.2",
+    "plotly>=6.0",
+    "kaleido>=0.4",
+    "seaborn>=0.13",
+    "matplotlib>=3.9",
+    "openpyxl>=3.1",
+    "pyyaml>=6.0",
+    "rich>=13.0",
+    "tqdm>=4.67",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.9",
+    "pytest>=8.3",
+    "pytest-cov>=6.0",
+    "ipykernel>=6.29",
+    "pre-commit>=4.0",
+    "nbformat>=5.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "TCH",  # flake8-type-checking
+    "RUF",  # ruff-specific
+    "N",    # pep8-naming
+    "D",    # pydocstyle
+]
+ignore = [
+    "D100",
+    "D104",
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-v --tb=short"
