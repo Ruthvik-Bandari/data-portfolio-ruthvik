@@ -1,0 +1,862 @@
+component: gr
+label: Graduation Rates
+primary_key: UNITID
+columns:
+  CHRTSTAT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  COHORT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GR2MORM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GR2MORT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GR2MORW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRAIANM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRAIANT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRAIANW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRASIAM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRASIAT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRASIAW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRBKAAM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRBKAAT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRBKAAW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRHISPM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRHISPT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRHISPW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNHPIM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNHPIT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNHPIW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNRALM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNRALT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRNRALW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRTOTLM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRTOTLT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRTOTLW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRTYPE:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRUNKNM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRUNKNT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRUNKNW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRWHITM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRWHITT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  GRWHITW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  LINE:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  SECTION:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  UNITID:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - Int64
+    consistent_type: true
+    all_years: true
+  XGR2MORM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGR2MORT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGR2MORW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRAIANM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRAIANT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRAIANW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRASIAM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRASIAT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRASIAW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRBKAAM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRBKAAT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRBKAAW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRHISPM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRHISPT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRHISPW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNHPIM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNHPIT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNHPIW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNRALM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNRALT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRNRALW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRTOTLM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRTOTLT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRTOTLW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRUNKNM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRUNKNT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRUNKNW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRWHITM:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRWHITT:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
+  XGRWHITW:
+    present_in:
+    - 2018
+    - 2019
+    - 2020
+    - 2021
+    - 2022
+    - 2023
+    - 2024
+    types_observed:
+    - String
+    consistent_type: true
+    all_years: true
