@@ -1,0 +1,27 @@
+name: "CI: College Scorecard"
+
+on:
+  push:
+    branches: [main, "feat/**"]
+    paths: ["02-college-scorecard-analytics/**"]
+  pull_request:
+    branches: [main]
+    paths: ["02-college-scorecard-analytics/**"]
+
+defaults:
+  run:
+    working-directory: 02-college-scorecard-analytics
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: uv sync --all-extras
+      - run: uv run ruff check src/ tests/
+      - run: uv run ruff format --check src/ tests/
+      - run: uv run pytest tests/ -v --tb=short

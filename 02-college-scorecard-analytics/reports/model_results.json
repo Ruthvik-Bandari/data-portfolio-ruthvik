@@ -1,0 +1,23 @@
+{
+  "best_model": "Random Forest",
+  "results": {
+    "Ridge Regression": {
+      "r2_mean": 0.9248,
+      "r2_std": 0.025,
+      "rmse_mean": 4384.0,
+      "mae_mean": 2578.0
+    },
+    "Random Forest": {
+      "r2_mean": 0.9342,
+      "r2_std": 0.0284,
+      "rmse_mean": 4073.0,
+      "mae_mean": 2311.0
+    },
+    "XGBoost": {
+      "r2_mean": 0.9297,
+      "r2_std": 0.0259,
+      "rmse_mean": 4238.0,
+      "mae_mean": 2449.0
+    }
+  }
+}
