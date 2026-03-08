@@ -197,6 +197,24 @@ make viz         # Generate 6 Plotly charts (HTML + PNG)
 ├── tests/                         # pytest suite (22 tests)
 └── tasks/                         # Task tracker + lessons learned
 ```
+## Dashboards
+
+### Tableau Dashboard (Published)
+
+[![Tableau Dashboard](reports/images/tableau_dashboard.png)](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/IPEDSHigherEducationDashboard/Dashboard1)
+
+**[View Interactive Dashboard on Tableau Public](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/IPEDSHigherEducationDashboard/Dashboard1)**
+
+4 interactive views:
+- Institution count trends by sector (2018-2024)
+- Geographic map of institutions by state
+- Total 12 month enrollment trends
+- Degrees awarded by level (stacked bar)
+
+### Power BI Dashboard
+- Executive KPI cards
+- Drill down: institution type, state, individual institution
+- Year over year growth with DAX measures
 
 ## License
 
