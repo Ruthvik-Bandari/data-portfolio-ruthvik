@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import {
   BarChart3, Database, Brain, Github, Linkedin, Mail, Sun, Moon,
   Code2, Layers, Activity, ChevronDown, ArrowUpRight, FileText,
-  Workflow,
+  Workflow, ExternalLink,
 } from "lucide-react";
 
 /* ── Floating Data Viz Background ────────────────────────────────────────── */
@@ -72,34 +72,42 @@ const projects = [
   {
     id: 1, title: "IPEDS Pipeline & Dashboard",
     desc: "Production data pipeline harmonizing 72+ CSVs across 7 years of IPEDS survey data. Automated schema detection, type coercion, and deduplication for ~6,400 US institutions.",
+    vizDesc: "Interactive dashboard with institution trends by sector, geographic state map, enrollment analysis, and degree completions breakdown.",
     stats: [{k:"Rows",v:"3M+"},{k:"Files",v:"28"},{k:"Changes",v:"47"},{k:"Coercions",v:"8"}],
-    tech: ["Polars","Pandera","DuckDB","Plotly","Tableau","Power BI"],
+    tech: ["Polars","Pandera","DuckDB","Plotly","Tableau"],
     icon: Database, color: "text-[#2E75B6]", colorBg: "bg-[#2E75B6]/10", colorStat: "text-[#2E75B6]",
     github: "https://github.com/Ruthvik-Bandari/data-portfolio-ruthvik/tree/main/01-ipeds-pipeline-dashboard",
+    tableau: "https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/IPEDSHigherEducationDashboard/Dashboard1",
   },
   {
     id: 2, title: "College Scorecard Analytics",
     desc: "Predictive modeling of post-graduation earnings using 3,000+ institutional variables. Random Forest achieves R\u00B2=0.934 with SHAP explainability analysis.",
+    vizDesc: "Cost vs earnings scatter plot, median earnings by state, admission selectivity analysis with trend lines, and earnings distribution box plots.",
     stats: [{k:"R\u00B2",v:"0.934"},{k:"Features",v:"35"},{k:"Institutions",v:"5,280"},{k:"Models",v:"3"}],
     tech: ["XGBoost","SHAP","scikit-learn","Polars","Plotly"],
     icon: Brain, color: "text-[#17A2B8]", colorBg: "bg-[#17A2B8]/10", colorStat: "text-[#17A2B8]",
     github: "https://github.com/Ruthvik-Bandari/data-portfolio-ruthvik/tree/main/02-college-scorecard-analytics",
+    tableau: "https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CollegeScorecardAnalytics_/Dashboard1",
   },
   {
     id: 3, title: "Higher Ed Text Analytics",
     desc: "NLP pipeline for topic modeling and sentiment analysis on ERIC research abstracts. BERTopic discovers latent themes in higher education research discourse.",
-    stats: [{k:"Docs",v:"238"},{k:"Topics",v:"2+"},{k:"Sentiment",v:"61%+"},{k:"Keywords",v:"2,380"}],
+    vizDesc: "Topic distribution, sentiment trends over time, topic prevalence heatmap by year, and per-topic sentiment comparison.",
+    stats: [{k:"Docs",v:"238"},{k:"Topics",v:"3"},{k:"Sentiment",v:"61%+"},{k:"Keywords",v:"2,380"}],
     tech: ["BERTopic","Transformers","KeyBERT","sentence-transformers","Plotly"],
     icon: FileText, color: "text-[#F39C12]", colorBg: "bg-[#F39C12]/10", colorStat: "text-[#F39C12]",
     github: "https://github.com/Ruthvik-Bandari/data-portfolio-ruthvik/tree/main/03-higher-ed-text-analytics",
+    tableau: "https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/HigherEducationTextAnalytics/HigherEducationTextAnalytics",
   },
   {
     id: 4, title: "Course Sentiment Dashboard",
     desc: "Aspect level sentiment analysis across 5,000 course reviews. Extracts sentiment for 6 categories with DuckDB powered aggregation and interactive dashboards.",
+    vizDesc: "Department sentiment rankings, aspect heatmap across 12 departments, temporal trends, and star rating vs text sentiment alignment.",
     stats: [{k:"Reviews",v:"5,000"},{k:"Aspects",v:"6"},{k:"Depts",v:"12"},{k:"Positive",v:"84%"}],
     tech: ["Transformers","DuckDB","Polars","Plotly","Tableau"],
     icon: Activity, color: "text-[#2ECC71]", colorBg: "bg-[#2ECC71]/10", colorStat: "text-[#2ECC71]",
     github: "https://github.com/Ruthvik-Bandari/data-portfolio-ruthvik/tree/main/04-course-sentiment-dashboard",
+    tableau: "https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CourseSentimentDashboard/CourseReviewSentimentDashboard",
   },
 ];
 
@@ -107,7 +115,7 @@ const skillGroups = [
   { category: "Data Processing", icon: Database, skills: ["Polars","DuckDB","PyArrow","Pandera","SQL"] },
   { category: "Machine Learning", icon: Brain, skills: ["XGBoost","scikit-learn","SHAP","Feature Engineering"] },
   { category: "NLP & Text Analytics", icon: FileText, skills: ["BERTopic","Transformers","KeyBERT","spaCy","Sentiment Analysis"] },
-  { category: "Data Visualization", icon: BarChart3, skills: ["Tableau","Power BI","Plotly","Seaborn","Matplotlib"] },
+  { category: "Data Visualization", icon: BarChart3, skills: ["Tableau","Plotly","Seaborn","Matplotlib"] },
   { category: "Pipeline Engineering", icon: Workflow, skills: ["uv","Make","GitHub Actions","CI/CD","Parquet"] },
   { category: "Code Quality", icon: Code2, skills: ["Python 3.12+","pytest","ruff","Type Hints","Docstrings"] },
 ];
@@ -148,13 +156,13 @@ export default function Portfolio() {
   return (
     <div className={`${bg} ${textPrimary} min-h-screen w-full overflow-x-hidden transition-colors duration-300`}>
 
-      {/* ── Progress Bar ─────────────────────────────── */}
+      {/* Progress Bar */}
       <motion.div
         className="fixed top-0 left-0 right-0 h-[3px] z-[100] origin-left bg-gradient-to-r from-[#2E75B6] to-[#17A2B8]"
         style={{ scaleX: scrollYProgress }}
       />
 
-      {/* ── Nav ──────────────────────────────────────── */}
+      {/* Nav */}
       <nav className={`fixed top-0 inset-x-0 z-90 px-6 sm:px-10 py-4 flex justify-between items-center backdrop-blur-xl border-b ${borderColor} ${dark ? "bg-[#09090b]/80" : "bg-[#fafbfc]/85"}`}>
         <div className="flex items-center gap-2.5">
           <Layers size={20} className={accentText}/>
@@ -162,15 +170,15 @@ export default function Portfolio() {
         </div>
         <div className="flex items-center gap-6">
           {["Projects","Skills","Contact"].map(item => (
-            <a key={item} href={`#${item.toLowerCase()}`} className={`${textSecondary} text-sm font-medium hover:${textPrimary} transition-colors hidden sm:block`}>{item}</a>
+            <a key={item} href={`#${item.toLowerCase()}`} className={`${textSecondary} text-sm font-medium hidden sm:block`}>{item}</a>
           ))}
-          <button onClick={() => setDark(d => !d)} aria-label="Toggle theme" className={`p-1.5 rounded-lg border ${borderColor} ${textSecondary} cursor-pointer hover:${textPrimary} transition-colors`}>
+          <button onClick={() => setDark(d => !d)} aria-label="Toggle theme" className={`p-1.5 rounded-lg border ${borderColor} ${textSecondary} cursor-pointer`}>
             {dark ? <Sun size={16}/> : <Moon size={16}/>}
           </button>
         </div>
       </nav>
 
-      {/* ── Hero ──────────────────────────────────────── */}
+      {/* Hero */}
       <motion.section className="relative pt-40 pb-28 px-6 sm:px-10 overflow-hidden" style={{ opacity: heroOpacity, scale: heroScale }}>
         <FloatingViz dark={dark}/>
         <div className="max-w-[1400px] mx-auto relative z-10">
@@ -190,7 +198,7 @@ export default function Portfolio() {
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#2E75B6] text-white text-[15px] font-semibold hover:bg-[#2563a0] transition-colors">
                 <Github size={18}/> View Portfolio
               </a>
-              <a href="#projects" className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${borderColor} text-[15px] font-medium hover:${bgAlt} transition-colors`}>
+              <a href="#projects" className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${borderColor} text-[15px] font-medium`}>
                 Explore Projects <ChevronDown size={16}/>
               </a>
             </div>
@@ -198,7 +206,7 @@ export default function Portfolio() {
         </div>
       </motion.section>
 
-      {/* ── Stats ─────────────────────────────────────── */}
+      {/* Stats */}
       <section className={`border-y ${borderColor} ${bgAlt}`}>
         <div className="max-w-[1400px] mx-auto grid grid-cols-2 sm:grid-cols-4 px-6 sm:px-10 py-2">
           {stats.map((s, i) => (
@@ -210,7 +218,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── Projects ──────────────────────────────────── */}
+      {/* Projects */}
       <section id="projects" className="max-w-[1400px] mx-auto py-24 px-6 sm:px-10">
         <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] font-normal tracking-[-0.02em] mb-3">Projects</h2>
@@ -221,9 +229,7 @@ export default function Portfolio() {
           {projects.map((p, i) => {
             const Icon = p.icon;
             return (
-              <motion.div key={p.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: i*0.1, duration: 0.5 }}
-                className="h-full"
-              >
+              <motion.div key={p.id} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-60px" }} transition={{ delay: i*0.1, duration: 0.5 }} className="h-full">
                 <motion.div
                   whileHover={{ y: -2 }}
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
@@ -241,10 +247,17 @@ export default function Portfolio() {
                   </div>
 
                   {/* Description */}
-                  <p className={`${textSecondary} text-sm leading-relaxed mb-auto min-h-[72px]`}>{p.desc}</p>
+                  <p className={`${textSecondary} text-sm leading-relaxed mb-3 min-h-[48px]`}>{p.desc}</p>
+
+                  {/* Viz Description */}
+                  <div className={`${subtleBg} rounded-lg px-3.5 py-2.5 mb-4 border-l-2`} style={{ borderLeftColor: p.color.includes("2E75B6") ? "#2E75B6" : p.color.includes("17A2B8") ? "#17A2B8" : p.color.includes("F39C12") ? "#F39C12" : "#2ECC71" }}>
+                    <p className={`${textMuted} text-xs leading-relaxed`}>
+                      <span className="font-semibold">Dashboard:</span> {p.vizDesc}
+                    </p>
+                  </div>
 
                   {/* Stats */}
-                  <div className={`grid grid-cols-4 gap-2 my-5 p-3.5 rounded-[10px] ${subtleBg}`}>
+                  <div className={`grid grid-cols-4 gap-2 mb-5 p-3.5 rounded-[10px] ${subtleBg}`}>
                     {p.stats.map(s => (
                       <div key={s.k} className="text-center">
                         <div className={`text-base font-bold ${p.colorStat}`}>{s.v}</div>
@@ -260,10 +273,15 @@ export default function Portfolio() {
                     ))}
                   </div>
 
-                  {/* Link */}
-                  <a href={p.github} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 ${accentText} text-sm font-semibold hover:underline`}>
-                    View on GitHub <ArrowUpRight size={14}/>
-                  </a>
+                  {/* Links */}
+                  <div className="flex items-center gap-5 mt-auto">
+                    <a href={p.github} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 ${accentText} text-sm font-semibold hover:underline`}>
+                      <Github size={14}/> Code <ArrowUpRight size={12}/>
+                    </a>
+                    <a href={p.tableau} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 text-sm font-semibold hover:underline`} style={{ color: "#17A2B8" }}>
+                      <ExternalLink size={14}/> Tableau Dashboard <ArrowUpRight size={12}/>
+                    </a>
+                  </div>
                 </motion.div>
               </motion.div>
             );
@@ -271,7 +289,7 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── Skills ────────────────────────────────────── */}
+      {/* Skills */}
       <section id="skills" className={`${bgAlt} py-24 px-6 sm:px-10`}>
         <div className="max-w-[1400px] mx-auto">
           <motion.div className="text-center mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
@@ -302,24 +320,23 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* ── Contact ───────────────────────────────────── */}
+      {/* Contact */}
       <section id="contact" className="max-w-2xl mx-auto py-24 px-6 sm:px-10 text-center">
         <motion.div className="mb-14" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <h2 className="font-serif text-3xl sm:text-4xl lg:text-[44px] font-normal tracking-[-0.02em] mb-3">Let's Connect</h2>
-          <p className={`${textSecondary} text-base`}></p>
         </motion.div>
 
         <div className="flex justify-center gap-4 flex-wrap">
           {socials.map(({ icon: Icon, label, href }) => (
             <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-              className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${borderColor} text-sm font-medium hover:${bgAlt} transition-colors`}>
+              className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl border ${borderColor} text-sm font-medium`}>
               <Icon size={18}/> {label}
             </a>
           ))}
         </div>
       </section>
 
-      {/* ── Footer ────────────────────────────────────── */}
+      {/* Footer */}
       <footer className={`border-t ${borderColor} py-8 text-center text-[13px] ${textMuted}`}>
         Ruthvik Nath Bandari | Data Science & Visualization Portfolio
       </footer>
