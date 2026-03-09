@@ -31,6 +31,21 @@ make all
 - Temporal sentiment trends
 - Rating vs sentiment alignment analysis
 
+
+## Dashboards
+
+### Tableau Dashboard (Published)
+
+[![Tableau Dashboard](reports/images/tableau_dashboard.png)](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CourseSentimentDashboard/CourseReviewSentimentDashboard)
+
+**[View Interactive Dashboard on Tableau Public](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CourseSentimentDashboard/CourseReviewSentimentDashboard)**
+
+4 interactive views:
+- Department sentiment (ranked bar chart)
+- Aspect heatmap by department
+- Temporal sentiment trends (2020-2024)
+- Rating vs sentiment alignment
+
 ## License
 
 MIT

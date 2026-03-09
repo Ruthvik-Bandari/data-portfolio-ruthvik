@@ -34,6 +34,16 @@ make all
 - Keyword extraction per document
 - Tableau ready CSV export
 
+[![Tableau Dashboard](reports/images/tableau_dashboard.png)](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/HigherEducationTextAnalytics/HigherEducationTextAnalytics)
+
+**[View Interactive Dashboard on Tableau Public](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/HigherEducationTextAnalytics/HigherEducationTextAnalytics)**
+
+4 interactive views:
+- Topic distribution (document count per topic)
+- Sentiment timeline (2018-2026)
+- Topic x Year heatmap
+- Sentiment by topic
+
 ## License
 
 MIT
