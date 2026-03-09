@@ -27,6 +27,25 @@ make setup
 make all
 ```
 
+## Dashboards
+
+### Tableau Dashboard (Published)
+
+[![Tableau Dashboard](reports/images/tableau_dashboard.png)](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CollegeScorecardAnalytics_/Dashboard1)
+
+**[View Interactive Dashboard on Tableau Public](https://public.tableau.com/app/profile/ruthvik.nath.bandari/viz/CollegeScorecardAnalytics_/Dashboard1)**
+
+4 interactive views:
+- Cost of attendance vs post-graduation earnings scatter
+- Median earnings by state (filled map)
+- Selectivity vs earnings with trend lines
+- Earnings distribution by sector (box plots)
+
+### Power BI Dashboard
+- KPI cards with average earnings, cost, admission rate
+- What-If parameter for admission rate threshold
+- Bookmarks for sector comparison
+
 ## License
 
 MIT
